@@ -108,4 +108,6 @@ VentaCliente <- data2 %>% group_by(Country) %>% summarise(CompanyName)
 
 ggplot(VentaCliente,aes(x = VentaCliente$Country,y = CompanyName))+ geom_bar(stat = "identity")
 
+ventas <- data2 %>% group_by(Country) %>% group_by(ProductID) %>%summarise(total)
+
 
