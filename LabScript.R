@@ -1,11 +1,13 @@
 ### INSTALACION DE PAQUETES
 install.packages("RODBC")
 install.packages("dplyr")
+install.packages("ggplot2")
 
 ### IMPORTACION DE PAQUETES
 
 library(RODBC)
 library(dplyr)
+library(ggplot2)
 
 ### Obtencion de la data de base datos
 
@@ -70,5 +72,40 @@ mean(is.na(data))
 
 apply(is.na(data), 2, sum)
 
+ggplot(data,aes(x=data$Quantity, y=data$UnitPrice))+geom_boxplot()
+
+apply(is.na(data), 2, sum)
+
+data2 <- select(data,CompanyName,City,Region,Country,OrderDate,Quantity,UnitPrice,ProductID)
+
+total <-as.data.frame(data2$UnitPrice * data2$Quantity)
+glimpse(total)
+data2 <- cbind(data2,total)
+head(data2)
+
+colnames(data2) <- c('CompanyName','City','Region','Country','OrderDate','Quantity','UnitPrice','ProductoID','Total_Sells')
+
+Year <- as.data.frame(format(data2$OrderDate,'%Y'))
+Month <- as.data.frame(format(data2$OrderDate,'%m'))
+
+colnames(Year) <- c('Year')
+colnames(Month) <- c('Month')
+
+data2 <- cbind(data2,Year)
+data2 <- cbind(data2,Month)
+
+data2$Year <- as.numeric(data2$Year)
+data2$Month <- as.numeric(data2$Month)
+Except <- filter(data2,data2$Year >=1997)
+
+ggplot(data2,aes(x = City,y = Total_Sells))+ geom_bar(stat = "identity")
+
+ggplot(Except,aes(x = Year,y = Total_Sells))+ geom_bar(stat = "identity")
+ggplot(data2,aes(x = data2$CompanyName,y = Total_Sells))+ geom_bar(stat = "identity")
+
+
+VentaCliente <- data2 %>% group_by(Country) %>% summarise(CompanyName)
+
+ggplot(VentaCliente,aes(x = VentaCliente$Country,y = CompanyName))+ geom_bar(stat = "identity")
 
 
